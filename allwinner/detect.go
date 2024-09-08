@@ -60,6 +60,14 @@ func IsH5() bool {
 	return detection.isH5
 }
 
+// IsH616 detects whether the host CPU is an Allwinner H616 CPU.
+//
+// It looks for the string "sun50i-h616" in /proc/device-tree/compatible.
+func IsH616() bool {
+	detection.do()
+	return detection.isH616
+}
+
 //
 
 type detectionS struct {
@@ -71,6 +79,7 @@ type detectionS struct {
 	isA64       bool
 	isH3        bool
 	isH5        bool
+	isH616      bool
 }
 
 var detection detectionS
@@ -104,8 +113,11 @@ func (d *detectionS) do() {
 				if strings.Contains(c, "sun50i-h5") {
 					d.isH5 = true
 				}
+				if strings.Contains(c, "sun50i-h616") {
+					d.isH616 = true
+				}
 			}
-			d.isAllwinner = d.isA64 || d.isR8 || d.isA20 || d.isH3 || d.isH5
+			d.isAllwinner = d.isA64 || d.isR8 || d.isA20 || d.isH3 || d.isH5 || d.isH616
 
 			if !d.isAllwinner {
 				// The kernel in the image that comes pre-installed on the pcDuino3 Nano

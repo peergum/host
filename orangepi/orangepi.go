@@ -31,7 +31,8 @@ func Present() bool {
 }
 
 const (
-	boardZero string = "Orange Pi Zero" // + LTS (H2/H3 have identical pinouts)
+	boardZero   string = "Orange Pi Zero"    // + LTS (H2/H3 have identical pinouts)
+	boardZero2W string = "Orange Pi Zero 2W" //
 )
 
 var (
@@ -75,6 +76,48 @@ var (
 	FUN1_11 pin.Pin = allwinner.MIC_IN   // INPUT Analog Microphone pin (+)
 	FUN1_12 pin.Pin = allwinner.MIC_GND  // INPUT Analog Microphone pin (-)
 	FUN1_13 pin.Pin = allwinner.PL11     // IR-RX
+
+	// Orange Pi Zero 2W
+	P1_1  pin.Pin    = pin.V3_3       // max 30mA
+	P1_2  pin.Pin    = pin.V5         // (filtered)
+	P1_3  gpio.PinIO = allwinner.PI8  // High, TWI1_SDA
+	P1_4  pin.Pin    = pin.V5         //
+	P1_5  gpio.PinIO = allwinner.PI7  // High, TWI1_SCL
+	P1_6  pin.Pin    = pin.GROUND     //
+	P1_7  gpio.PinIO = allwinner.PI13 // High, PWM3
+	P1_8  gpio.PinIO = allwinner.PH0  // Low, UART0_TX
+	P1_9  pin.Pin    = pin.GROUND     //
+	P1_10 gpio.PinIO = allwinner.PH1  // Low, UART0_RX
+	P1_11 gpio.PinIO = allwinner.PH2  // Low, UART5_TX
+	P1_12 gpio.PinIO = allwinner.PI1  // Low,
+	P1_13 gpio.PinIO = allwinner.PH3  // Low, UART5_RX
+	P1_14 pin.Pin    = pin.GROUND     //
+	P1_15 gpio.PinIO = allwinner.PI5  // Low, UART2_TX
+	P1_16 gpio.PinIO = allwinner.PI4  // Low, PWM4
+	P1_17 pin.Pin    = pin.V3_3       //
+	P1_18 gpio.PinIO = allwinner.PH4  // Low,
+	P1_19 gpio.PinIO = allwinner.PH7  // Low, SPI1_MOSI
+	P1_20 pin.Pin    = pin.GROUND     //
+	P1_21 gpio.PinIO = allwinner.PH8  // Low, SPI1_MISO
+	P1_22 gpio.PinIO = allwinner.PI6  // Low,
+	P1_23 gpio.PinIO = allwinner.PH6  // Low, SPI1_CLK
+	P1_24 gpio.PinIO = allwinner.PH5  // High, SPI1_CS0
+	P1_25 pin.Pin    = pin.GROUND     //
+	P1_26 gpio.PinIO = allwinner.PH9  // High, SPI1_CS1
+	P1_27 gpio.PinIO = allwinner.PI10 // High, TWI2_SDA used to probe for HAT EEPROM, see https://github.com/raspberrypi/hats
+	P1_28 gpio.PinIO = allwinner.PI9  // High, TWI2_SCL
+	P1_29 gpio.PinIO = allwinner.PI0  //
+	P1_30 pin.Pin    = pin.GROUND     //
+	P1_31 gpio.PinIO = allwinner.PI15 //
+	P1_32 gpio.PinIO = allwinner.PI11 // Low,  PWM1
+	P1_33 gpio.PinIO = allwinner.PI12 // Low,  PWM2
+	P1_34 pin.Pin    = pin.GROUND     //
+	P1_35 gpio.PinIO = allwinner.PI2  // Low,  I2S_WS, SPI1_MISO, PWM1
+	P1_36 gpio.PinIO = allwinner.PC12 // Low,  UART0_CTS, SPI1_CS2, UART1_CTS
+	P1_37 gpio.PinIO = allwinner.PI16 //
+	P1_38 gpio.PinIO = allwinner.PI4  // Low,  I2S_DIN, SPI1_MOSI, CLK0
+	P1_39 pin.Pin    = pin.GROUND     //
+	P1_40 gpio.PinIO = allwinner.PI3  //
 )
 
 // registerHeaders registers the headers for various Orange Pi boards. Currently
@@ -119,8 +162,33 @@ func registerHeaders(model string) error {
 		}); err != nil {
 			return err
 		}
-	}
+	} else if strings.Contains(model, boardZero2W) {
+		if err := pinreg.Register("P1", [][]pin.Pin{
+			{P1_1, P1_2},
+			{P1_3, P1_4},
+			{P1_5, P1_6},
+			{P1_7, P1_8},
+			{P1_9, P1_10},
+			{P1_11, P1_12},
+			{P1_13, P1_14},
+			{P1_15, P1_16},
+			{P1_17, P1_18},
+			{P1_19, P1_20},
+			{P1_21, P1_22},
+			{P1_23, P1_24},
+			{P1_25, P1_26},
+			{P1_27, P1_28},
+			{P1_29, P1_30},
+			{P1_31, P1_32},
+			{P1_33, P1_34},
+			{P1_35, P1_36},
+			{P1_37, P1_38},
+			{P1_39, P1_40},
+		}); err != nil {
+			return err
+		}
 
+	}
 	return nil
 }
 
@@ -149,7 +217,7 @@ func (d *driver) After() []string {
 // driver will be registered.
 func (d *driver) Init() (bool, error) {
 	if !Present() {
-		return false, errors.New("borad Orange Pi not detected")
+		return false, errors.New("board Orange Pi not detected")
 	}
 
 	model := distro.DTModel()
